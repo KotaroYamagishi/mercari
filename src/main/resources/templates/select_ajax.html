@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <select class="form-control" id="childCategory" name="childCategory" th:fragment="selectChildCategory">
+        <option  th:each="category : ${selectAjaxCategoryMap}" th:value="${category.key}" th:text="${category.value}" th:selected="${category.key==childId}">singleSelect</option>
+    </select>
+
+    <select class="form-control" id="grandChildCategory" name="grandChildCategory" th:fragment="selectGrandChildCategory">
+        <option  th:each="category : ${selectAjaxCategoryMap}" th:value="${category.key}" th:text="${category.value}" th:selected="${category.key==grandChildId}">singleSelect</option>
+    </select>
+</body>
+    
+</html>
