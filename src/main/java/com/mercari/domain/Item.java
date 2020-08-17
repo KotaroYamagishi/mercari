@@ -12,7 +12,8 @@ public class Item {
   private Integer price;
   private Integer shipping;
   private String description;
-  private List<String> categoryNameList;
+  private List<Category> categoryList;
+  private Brand brnadInfo;
 
   public Integer getId() {
     return id;
@@ -86,12 +87,20 @@ public class Item {
     this.description = description;
   }
 
-  public List<String> getCategoryNameList() {
-    return categoryNameList;
+  public List<Category> getCategoryList() {
+    return categoryList;
   }
 
-  public void setCategoryNameList(List<String> categoryNameList) {
-    this.categoryNameList = categoryNameList;
+  public void setCategoryList(List<Category> categoryList) {
+    this.categoryList = categoryList;
+  }
+
+  public Brand getBrnadInfo() {
+    return brnadInfo;
+  }
+
+  public void setBrnadInfo(Brand brnadInfo) {
+    this.brnadInfo = brnadInfo;
   }
 
   

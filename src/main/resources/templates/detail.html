@@ -62,10 +62,10 @@
           <tr>
             <th>category</th>
             <td>
-              <span th:each="category,stat:*{categoryNameList}">
+              <span th:each="category,stat:*{categoryList}">
                 <span th:if="${stat.index}==1">/</span>
                 <span th:if="${stat.index}==2">/</span>
-                <span th:text="${category}"></span>
+                <span th:text="${category.name}"></span>
               </span>
               </td>
           </tr>

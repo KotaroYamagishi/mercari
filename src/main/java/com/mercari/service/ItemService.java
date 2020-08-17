@@ -21,8 +21,13 @@ public class ItemService {
     /** 
      * @return List<Item>
      */
-    public List<Item> showAll(){
-        List<Item> itemList=itemRepository.findAll();
+    public List<Item> showAll(Integer page){
+        List<Item> itemList=itemRepository.findAll(page);
+        return itemList;
+    }
+
+    public List<Item> showAll(String name,String categoryId,String brandName,Integer page){
+        List<Item> itemList=itemRepository.findAll(name, categoryId, brandName, page);
         return itemList;
     }
 
@@ -53,6 +58,12 @@ public class ItemService {
 
     public Integer insertId(){
         return itemRepository.insertId();
+    }
+
+    public Integer totalPage(String name,String categoryId,String brandName){
+        Integer totalCount=itemRepository.totalCount(name,categoryId,brandName);
+        Integer totalPage=totalCount/30+1;
+        return totalPage;
     }
 
 }

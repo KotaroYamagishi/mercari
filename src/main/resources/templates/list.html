@@ -10,7 +10,6 @@
     integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
     integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"/>
-  <link rel="stylesheet" href="./mercari.css"/>
   <!-- script -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
@@ -48,40 +47,32 @@
 
     <!-- 検索フォーム -->
     <div id="forms">
-      <form action="" class="form-inline" role="form">
+      <form th:action="@{/}" class="form-inline" role="form" method="post" th:object="${itemSearchForm}">
         <div class="form-group">
-          <input type="input" class="form-control" id="name" placeholder="item name"/>
+          <input type="input" class="form-control" name="name" placeholder="item name" th:field="*{name}">
+        </div>
+        <div class="form-group"><i class="fa fa-plus"></i></div>
+        <div class="form-group categorybox" style="display:flex">
+          <div class="col-sm-8" style="flex-basis : 10px">
+            <select class="form-control" id="parentCategory" name="parentCategory">
+              <!-- th:selectedでvalueの値がparentIdのものに設定 -->
+              <option th:each="parent:${parentMap}" th:value="${parent.key}" th:text="${parent.value}"
+              th:selected="${parent.key==0}"></option>
+            </select>
+          </div>
+          <div id="resultDiv1" class="col-sm-8" style="flex-basis : 10px">
+            <!-- ajaxを使う前でもhtmlはfragmentを読み込むため、空のfragmentが最初に表示される。そのため、画面遷移時もajaxを使う必要がある。一応selectedで初期値を設定できるか、fragmentで、確かめる -->
+            <div th:replace="select_ajax::selectChildCategory" th:fragment="selectAjaxChild">
+            </div>
+          </div>
+          <div id="resultDiv2" class="col-sm-8" style="flex-basis : 10px">
+            <div th:replace="select_ajax::selectGrandChildCategory" th:fragment="selectAjaxGrandChild">
+            </div>
+          </div>
         </div>
         <div class="form-group"><i class="fa fa-plus"></i></div>
         <div class="form-group">
-          <select class="form-control">
-            <option>- parentCategory -</option>
-            <option>parentCategory1</option>
-            <option>parentCategory2</option>
-            <option>parentCategory3</option>
-            <option>parentCategory4</option>
-            <option>parentCategory5</option>
-          </select>
-          <select class="form-control">
-            <option>- childCategory -</option>
-            <option>childCategory1</option>
-            <option>childCategory2</option>
-            <option>childCategory3</option>
-            <option>childCategory4</option>
-            <option>childCategory5</option>
-          </select>
-          <select class="form-control">
-            <option>- grandChild -</option>
-            <option>grandChild1</option>
-            <option>grandChild2</option>
-            <option>grandChild3</option>
-            <option>grandChild4</option>
-            <option>grandChild5</option>
-          </select>
-        </div>
-        <div class="form-group"><i class="fa fa-plus"></i></div>
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="brand"/>
+          <input type="text" class="form-control" placeholder="brand" th:field="*{brand}">
         </div>
         <div class="form-group"></div>
         <button type="submit" class="btn btn-default"><i class="fa fa-angle-double-right"></i> search</button>
@@ -92,8 +83,12 @@
     <div class="pages">
       <nav class="page-nav">
         <ul class="pager">
-          <li class="previous"><a href="#">&larr; prev</a></li>
-          <li class="next"><a href="#">next &rarr;</a></li>
+          <span th:unless="${page}==1">
+            <li class="previous"><a href="#" th:href="@{/paging(page=${page},num=-1,name=${name},categoryId=${categoryId},brandName=${brandName})}">&larr; prev</a></li>
+          </span>
+          <span th:unless="${page}==${totalPage}">
+            <li class="next"><a href="#" th:href="@{/paging(page=${page},num=1,name=${name},categoryId=${categoryId},brandName=${brandName})}">next &rarr;</a></li>
+          </span>
         </ul>
       </nav>
     </div>
@@ -115,13 +110,14 @@
             <td class="item-name"><a th:href="@{'/item-detail?id='+${item.id}}" th:text="${item.name}"></a></td>
             <td class="item-price" th:text="${item.price}">52.0</td>
             <td class="item-category">
-            <span th:each="categoryname,stat:${item.categoryNameList}">
-              <a href="" th:text="${categoryname}">Electronics</a>
+              <!-- categoryのidがいる -->
+            <span th:each="category,stat:${item.categoryList}">
+              <a th:href="@{/search?(name=${name},categoryId=${category.id},brandName=${brandName})}" th:text="${category.name}">Electronics</a>
               <span th:if="${stat.index==0}">/</span>
               <span th:if="${stat.index==1}">/</span>
             </span>
             </td>
-            <td class="item-brand"><a href="" th:text="${item.brandName}">Razer</a></td>
+            <td class="item-brand"><a th:href="@{/search?(name=${name},categoryId=${categoryId},brandName=${item.brandName})}" th:text="${item.brandName}">Razer</a></td>
             <td class="item-condition" th:text="${item.condition}">3</td>
           </tr>
         </tbody>
@@ -132,19 +128,27 @@
     <div class="pages">
       <nav class="page-nav">
         <ul class="pager">
-          <li class="previous"><a href="#">&larr; prev</a></li>
-          <li class="next"><a href="#">next &rarr;</a></li>
+          <span th:unless="${page}==1">
+            <li class="previous"><a href="#" th:href="@{/paging(page=${page},num=-1,name=${name},categoryId=${categoryId},brandName=${brandName})}">&larr; prev</a></li>
+          </span>
+          <span th:unless="${page}==${totalPage}">
+            <li class="next"><a href="#" th:href="@{/paging(page=${page},num=1,name=${name},categoryId=${categoryId},brandName=${brandName})}">next &rarr;</a></li>
+          </span>
         </ul>
       </nav>
       <!-- ページ番号を指定して表示するフォーム -->
       <div id="select-page">
-        <form class="form-inline">
+        <form class="form-inline" th:action="@{/paging-jump}" method="post" th:object="${pageForm}">
           <div class="form-group">
+            <div th:text="${errormessage}"></div>
             <div class="input-group col-xs-6">
               <label></label>
-              <input type="text" class="form-control"/>
+              <input type="text" class="form-control" name="page"th:value="${page}"/>
+              <input type="hidden" name="name" th:value="${name}">
+              <input type="hidden" name="categoryId" th:value="${categoryId}">
+              <input type="hidden" name="brandName" th:value="${brandName}">
               <!-- 総ページ数 -->
-              <div class="input-group-addon">/ 20</div>
+              <div class="input-group-addon" th:text="${totalPage}">/ 20</div>
             </div>
             <div class="input-group col-xs-1">
               <button type="submit" class="btn btn-default">Go</button>
@@ -154,5 +158,8 @@
       </div>
     </div>
   </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="/js/list.js"></script>
 </body>
 </html>

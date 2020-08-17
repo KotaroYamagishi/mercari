@@ -28,11 +28,15 @@ public class BrandRepository {
    * 
    * @param brandId
    */
-  public Brand findBrandNameById(Integer brandId){
-    String sql="SELECT * FROM brands WHERE id=:id";
-    SqlParameterSource param = new MapSqlParameterSource().addValue("id", brandId);
-    Brand brand=template.queryForObject(sql, param,BRAND_ROW_MAPPER);
-    return brand;
+  public Brand findById(Integer brandId){
+    try{
+      String sql="SELECT * FROM brands WHERE id=:id";
+      SqlParameterSource param = new MapSqlParameterSource().addValue("id", brandId);
+      Brand brand=template.queryForObject(sql, param,BRAND_ROW_MAPPER);
+      return brand;
+    }catch(Exception e){
+      return null;
+    }
   }
 
   public Brand findByBrandName(String brandName){

@@ -62,7 +62,7 @@ public class AddController {
         Brand brand=brandService.findByBrandName(form.getBrand());
         // 新しいブランドとしてinsertし、自動裁判された番号を取得する
         if(Objects.isNull(brand)){
-            Integer brandId=brandService.insert(form.getName());
+            Integer brandId=brandService.insert(form.getBrand());
             item.setBrand(brandId);
         }else{
             item.setBrand(brand.getId());

@@ -15,7 +15,7 @@ public class BrandService {
     private BrandRepository brandRepository;
     
     public Brand findBrandName(Integer brandId){
-        Brand brand=brandRepository.findBrandNameById(brandId);
+        Brand brand=brandRepository.findById(brandId);
         return brand;
     }
 
