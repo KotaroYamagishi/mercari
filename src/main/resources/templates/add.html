@@ -26,15 +26,15 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" th:href="@{/}">Rakus Items</a>
+      <a class="navbar-brand" th:href="@{/item-list}">Rakus Items</a>
     </div>
     <div id="navbar" class="collapse navbar-collapse">
       <div>
         <ul class="nav navbar-nav navbar-right">
-          <li><a id="logout" th:href="@{login}">Logout&nbsp;<i class="fa fa-power-off"></i></a></li>
+          <li><a id="logout" th:href="@{/logout}">Logout&nbsp;<i class="fa fa-power-off"></i></a></li>
         </ul>
         <p class="navbar-text navbar-right">
-          <span id="loginName">user: userName</span>
+          <span id="loginName">user: <span th:text="${session.user.name}"></span></span>
         </p>
       </div>
     </div>
@@ -42,7 +42,7 @@
 
   <!-- details -->
   <div id="input-main" class="container">
-    <a type="button" class="btn btn-default" href="./list.html" th:href="@{/}"><i class="fa fa-reply"></i> back</a>
+    <a type="button" class="btn btn-default" href="./list.html" th:href="@{/item-list}"><i class="fa fa-reply"></i> back</a>
     <h2>Add</h2>
 
     <!-- add form -->
@@ -102,7 +102,6 @@
         <label for="brand" class="col-sm-2 control-label">brand</label>
         <div class="col-sm-8">
           <input type="text" id="brand" class="form-control" name="brand"/>
-          <span class="text-danger" th:if="${#fields.hasErrors('brand')}" th:errors="*{brand}" style="color:red"></span>
         </div>
       </div>
       <!-- condition -->

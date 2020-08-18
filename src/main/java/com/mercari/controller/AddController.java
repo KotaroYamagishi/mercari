@@ -6,6 +6,8 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpSession;
+
 import com.mercari.domain.Brand;
 import com.mercari.domain.Category;
 import com.mercari.domain.Item;
@@ -41,6 +43,9 @@ public class AddController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    HttpSession session;
+
     @RequestMapping("")
     public String addPage(Model model){
         // 親categoryのselectMap
@@ -55,6 +60,7 @@ public class AddController {
     // brandはまずテーブルにブランドがあるか検索する、なければ新しいブランドとしてinsertする処理がいる
     @RequestMapping("/add")
     public String add(@Validated ItemAddForm form,BindingResult result, Model model) {
+        session.getAttribute("user");
         if(result.hasErrors()){
             return addPage(model);
         }
@@ -77,6 +83,6 @@ public class AddController {
 
         itemService.insert(item);
 
-        return "forward:/";
+        return "redirect:/item-list";
     }
 }

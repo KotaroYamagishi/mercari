@@ -6,6 +6,8 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpSession;
+
 import com.mercari.domain.Brand;
 import com.mercari.domain.Category;
 import com.mercari.domain.Item;
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/item-list")
 public class ListController {
 
     @Autowired
@@ -33,6 +35,9 @@ public class ListController {
 
     @Autowired
     private BrandService brandService;
+
+    @Autowired
+    HttpSession session;
 
     @ModelAttribute
     public PageForm setUpPageForm() {
@@ -46,6 +51,7 @@ public class ListController {
 
     @RequestMapping("")
     public String index(Model model, ItemSearchForm form, String page) {
+        session.getAttribute("user");
         // pagingの処理
         Integer pageNum = null;
         if (Objects.isNull(page)) {
@@ -74,6 +80,9 @@ public class ListController {
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("brandName", brandName);
         List<Item> itemList = itemService.showAll(name, categoryId, brandName, pageNum);
+        if(itemList.size()==0){
+            model.addAttribute("emptyMessage", "商品が見つかりませんでした");
+        }
         itemList.forEach(item -> {
             List<Category> categoryList = categoryService.findCategoryByDescendantId(item.getCategory());
             item.setCategoryList(categoryList);

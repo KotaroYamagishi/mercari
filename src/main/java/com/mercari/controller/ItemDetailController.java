@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpSession;
+
 import com.mercari.domain.Brand;
 import com.mercari.domain.Category;
 import com.mercari.domain.Item;
@@ -34,6 +36,9 @@ public class ItemDetailController {
     @Autowired
     private BrandService brandService;
 
+    @Autowired
+    HttpSession session;
+
     @ModelAttribute
     public ItemDetailForm setUpForm() {
         return new ItemDetailForm();
@@ -48,6 +53,7 @@ public class ItemDetailController {
      */
     @RequestMapping("")
     public String itemDetail(String id, Model model) {
+        session.getAttribute("user");
         Item item = itemService.load(Integer.parseInt(id));
         List<Category> categoryList = categoryService.findCategoryByDescendantId(item.getCategory());
         item.setCategoryList(categoryList);
@@ -62,6 +68,7 @@ public class ItemDetailController {
 
     @RequestMapping("/edit-page")
     public String detailEditPage(Model model, String id) {
+        session.getAttribute("user");
         Item item = itemService.load(Integer.parseInt(id));
         List<Category> categoryList = categoryService.findCategoryByDescendantId(item.getCategory());
         item.setCategoryList(categoryList);

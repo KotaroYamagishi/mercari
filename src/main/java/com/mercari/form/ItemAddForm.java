@@ -15,7 +15,6 @@ public class ItemAddForm {
     private String childCategory;
     @NotBlank(message = "カテゴリーを選択してください")
     private String grandChildCategory;
-    @NotBlank(message = "ブランドを入力してください")
     private String brand;
     @NotBlank(message = "状態を選択してください")
     private String condition;
