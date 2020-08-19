@@ -20,10 +20,13 @@ import com.mercari.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@Validated
 @RequestMapping("/item-detail")
 public class ItemDetailController {
 
@@ -97,7 +100,10 @@ public class ItemDetailController {
     }
 
     @RequestMapping("/edit")
-    public String detailEdit(Model model, ItemDetailForm form) {
+    public String detailEdit(Model model,@Validated ItemDetailForm form,BindingResult result) {
+        if(result.hasErrors()){
+            return detailEditPage(model,form.getId());
+        }
         Item item = new Item();
         item.setId(Integer.parseInt(form.getId()));
         item.setName(form.getName());

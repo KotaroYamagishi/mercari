@@ -79,40 +79,57 @@ public class RestItemdetailController {
         return "edit::selectAjaxGrandChild";
     }
 
-    @RequestMapping("/search-first")
-    public String searchFirst(ModelMap modelMap, String depth) {
+    @RequestMapping("/search-child-first")
+    public String searchChildFirst(ModelMap modelMap,Model model,String parentId,String childId, String depth) {
         Map<Integer, String> categoryMap = new LinkedHashMap<Integer, String>();
-        categoryMap.put(0, "---");
-        modelMap.addAttribute("selectAjaxCategoryMap", categoryMap);
-        if (Objects.equals(depth, "2")) {
-            return "edit::selectAjaxChild";
-        } else {
-            return "edit::selectAjaxGrandChild";
+        if(!(Objects.equals(parentId, "0"))){
+            List<Category> categoryList = categoryService.findDepthCategoryByIdAndDepth(Integer.parseInt(parentId), Integer.parseInt(depth));
+            categoryMap = categoryList.stream()
+                .collect(Collectors.toMap(c -> c.getId(), c -> c.getName(), (e1, e2) -> e1, LinkedHashMap::new));
         }
+        categoryMap.put(0, "---");
+        model.addAttribute("categoryId",Integer.parseInt(childId));
+        modelMap.addAttribute("selectAjaxCategoryMap", categoryMap);
+        return "list::selectAjaxChild";
+    }
+    @RequestMapping("/search-grandchild-first")
+    public String searchFirst(ModelMap modelMap,Model model,String parentId,String childId, String depth) {
+        Map<Integer, String> categoryMap = new LinkedHashMap<Integer, String>();
+        if(!(Objects.equals(parentId, "0"))){
+            List<Category> categoryList = categoryService.findDepthCategoryByIdAndDepth(Integer.parseInt(parentId), Integer.parseInt(depth));
+            categoryMap = categoryList.stream()
+                .collect(Collectors.toMap(c -> c.getId(), c -> c.getName(), (e1, e2) -> e1, LinkedHashMap::new));
+        }
+        categoryMap.put(0, "---");
+        model.addAttribute("categoryId",Integer.parseInt(childId));
+        modelMap.addAttribute("selectAjaxCategoryMap", categoryMap);
+        return "list::selectAjaxGrandChild";
     }
 
     @RequestMapping("/search")
-    public String search(ModelMap modelMap, String parentCategory, String depth) {
+    public String search(ModelMap modelMap, Model model,String parentCategory, String depth) {
         if (!(Objects.equals(parentCategory, "0"))) {
             Integer ancestorId = Integer.parseInt(parentCategory);
             Integer depthId = Integer.parseInt(depth);
             List<Category> categoryList = categoryService.findDepthCategoryByIdAndDepth(ancestorId, depthId);
             Map<Integer, String> categoryMap = categoryList.stream()
                     .collect(Collectors.toMap(c -> c.getId(), c -> c.getName(), (e1, e2) -> e1, LinkedHashMap::new));
+            categoryMap.put(0, "---");
+            model.addAttribute("categoryId", 0);
             modelMap.addAttribute("selectAjaxCategoryMap", categoryMap);
             if (Objects.equals(depth, "2")) {
-                return "edit::selectAjaxChild";
+                return "list::selectAjaxChild";
             } else {
-                return "edit::selectAjaxGrandChild";
+                return "list::selectAjaxGrandChild";
             }
         } else {
             Map<Integer, String> categoryMap = new LinkedHashMap<Integer, String>();
             categoryMap.put(0, "---");
             modelMap.addAttribute("selectAjaxCategoryMap", categoryMap);
             if (Objects.equals(depth, "2")) {
-                return "edit::selectAjaxChild";
+                return "list::selectAjaxChild";
             } else {
-                return "edit::selectAjaxGrandChild";
+                return "list::selectAjaxGrandChild";
             }
         }
     }

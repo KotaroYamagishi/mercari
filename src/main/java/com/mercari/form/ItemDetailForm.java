@@ -1,15 +1,24 @@
 package com.mercari.form;
 
+import javax.validation.constraints.NotBlank;
+
 public class ItemDetailForm {
     
     private String id;
+    @NotBlank(message = "名前を入力してください")
     private String name;
+    @NotBlank(message = "金額を入力してください")
     private String price;
+    @NotBlank(message = "カテゴリーを選択してください")
     private String parentCategory;
+    @NotBlank(message = "カテゴリーを選択してください")
     private String childCategory;
+    @NotBlank(message = "カテゴリーを選択してください")
     private String grandChildCategory;
     private String brand;
+    @NotBlank(message = "状態を選択してください")
     private String condition;
+    @NotBlank(message = "説明を記載してください")
     private String description;
 
     public String getId() {

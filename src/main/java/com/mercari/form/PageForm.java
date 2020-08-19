@@ -1,9 +1,14 @@
 package com.mercari.form;
 
+import javax.validation.constraints.Pattern;
+
 public class PageForm {
+    @Pattern(regexp = "^[0-9]+$",message = "数字を入力してください")
     private String page;
     private String name;
-    private String categoryId;
+    private String parentCategory;
+    private String childCategory;
+    private String grandChildCategory;
     private String brandName;
 
     public String getPage() {
@@ -22,13 +27,6 @@ public class PageForm {
         this.name = name;
     }
 
-    public String getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
-    }
 
     public String getBrandName() {
         return brandName;
@@ -36,6 +34,30 @@ public class PageForm {
 
     public void setBrandName(String brandName) {
         this.brandName = brandName;
+    }
+
+    public String getParentCategory() {
+        return parentCategory;
+    }
+
+    public void setParentCategory(String parentCategory) {
+        this.parentCategory = parentCategory;
+    }
+
+    public String getChildCategory() {
+        return childCategory;
+    }
+
+    public void setChildCategory(String childCategory) {
+        this.childCategory = childCategory;
+    }
+
+    public String getGrandChildCategory() {
+        return grandChildCategory;
+    }
+
+    public void setGrandChildCategory(String grandChildCategory) {
+        this.grandChildCategory = grandChildCategory;
     }
 
     

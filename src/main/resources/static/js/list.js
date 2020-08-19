@@ -1,33 +1,30 @@
-$(function(){
+$(function () {
 
-    setTimeout(function(){
-        var depth=2;
-        ajaxChildSearchFirst(depth);
-    }, 100);
+    var parentId=$("#ajaxParent").val();
+    var childId = $("#ajaxChild").val();
+    var grandChildId=$("#ajaxGrandChild").val();
+    ajaxChildSearchFirst(parentId,childId,2);
 
-    setTimeout(function(){
-        var depth=3;
-        ajaxGrandChildSearchFirst(depth);
-    },200);
+    ajaxGrandChildSearchFirst(childId,grandChildId,3);
 
-     // categoryのcheckboxのvalueを変更した時
-     $("#parentCategory").on("change", function () {
-        parentCategory = $(this).val();
-        depth = 2;
+    // categoryのcheckboxのvalueを変更した時
+    $("#parentCategory").on("change", function () {
+        var parentCategory = $(this).val();
+        var depth = 2;
         ajaxChildSearch(parentCategory, depth);
         // 普通に処理前のchildcategoryのvalもってきてる
     });
     // settimeoutメソッドで取得を少し遅らせてる
-    $("#parentCategory").on("change", function(){
-        setTimeout(function(){
+    $("#parentCategory").on("change", function () {
+        setTimeout(function () {
             childCategory = $("#childCategory").val();
             depth = 3;
             ajaxGrandChildSearch(childCategory, depth);
-        },200);
+        }, 200);
     });
 
-    
-    $("#resultDiv1").on("change", "#childCategory",function () {
+
+    $("#resultDiv1").on("change", "#childCategory", function () {
         childCategory = $("#childCategory").val();
         depth = 3;
         ajaxGrandChildSearch(childCategory, depth);
@@ -35,12 +32,14 @@ $(function(){
 })
 
 // 遷移時に表示するためのメソッド
-function ajaxChildSearchFirst(depth) {
+function ajaxChildSearchFirst(parentId,childId,depth) {
     // event.preventDefault();
     $.ajax({
         type: "GET",
-        url: "/ajaxe/search-first",
+        url: "/ajaxe/search-child-first",
         data: {
+            "parentId":parentId,
+            "childId":childId,
             "depth": depth
         },
         dataType: "html"
@@ -51,12 +50,14 @@ function ajaxChildSearchFirst(depth) {
     })
 }
 // 遷移時に表示するためのメソッド
-function ajaxGrandChildSearchFirst(depth) {
+function ajaxGrandChildSearchFirst(childId,grandChildId,depth) {
     // event.preventDefault();
     $.ajax({
         type: "GET",
-        url: "/ajaxe/search-first",
+        url: "/ajaxe/search-grandchild-first",
         data: {
+            "parentId": childId,
+            "childId":grandChildId,
             "depth": depth
         },
         dataType: "html"
@@ -69,7 +70,7 @@ function ajaxGrandChildSearchFirst(depth) {
 
 
 // grandChildCategory2回目以降につける時のメソッド
-function ajaxChildSearch(parentCategory,depth) {
+function ajaxChildSearch(parentCategory, depth) {
     // event.preventDefault();
     $.ajax({
         type: "GET",
@@ -86,7 +87,7 @@ function ajaxChildSearch(parentCategory,depth) {
     })
 }
 // grandChildCategory2回目以降につける時のメソッド
-function ajaxGrandChildSearch(parentCategory,depth) {
+function ajaxGrandChildSearch(parentCategory, depth) {
     // event.preventDefault();
     $.ajax({
         type: "GET",

@@ -68,11 +68,11 @@ public class ItemRepository {
 
   // searchboxのためのメソッド
   public List<Item> findAll(String name,String categoryId,String brandName,Integer page){
-    String nameCategoryBrandSql="select i.id,i.name,i.condition,i.category,i.brand,(select b.name from brands as b where i.brand=b.id) as brandname,i.price,i.shipping,i.description from items as i where i.category in(select descendant_id from relations where ancestor_id=:categoryid) and i.name=:name and i.brand in(select id from brands where name=:brandname) ORDER BY i.id LIMIT 30 OFFSET :page;";
-    String nameCategorySql="select i.id,i.name,i.condition,i.category,i.brand,(select b.name from brands as b where i.brand=b.id) as brandname,i.price,i.shipping,i.description from items as i where i.category in(select descendant_id from relations where ancestor_id=:categoryid) and i.name=:name ORDER BY i.id LIMIT 30 OFFSET :page;";
-    String nameBrandSql="select i.id,i.name,i.condition,i.category,i.brand,(select b.name from brands as b where i.brand=b.id) as brandname,i.price,i.shipping,i.description from items as i where i.name=:name and i.brand in(select id from brands where name=:brandname) ORDER BY i.id LIMIT 30 OFFSET :page;";
+    String nameCategoryBrandSql="select i.id,i.name,i.condition,i.category,i.brand,(select b.name from brands as b where i.brand=b.id) as brandname,i.price,i.shipping,i.description from items as i where i.category in(select descendant_id from relations where ancestor_id=:categoryid) and i.name LIKE :name and i.brand in(select id from brands where name=:brandname) ORDER BY i.id LIMIT 30 OFFSET :page;";
+    String nameCategorySql="select i.id,i.name,i.condition,i.category,i.brand,(select b.name from brands as b where i.brand=b.id) as brandname,i.price,i.shipping,i.description from items as i where i.category in(select descendant_id from relations where ancestor_id=:categoryid) and i.name LIKE :name ORDER BY i.id LIMIT 30 OFFSET :page;";
+    String nameBrandSql="select i.id,i.name,i.condition,i.category,i.brand,(select b.name from brands as b where i.brand=b.id) as brandname,i.price,i.shipping,i.description from items as i where i.name LIKE:name and i.brand in(select id from brands where name=:brandname) ORDER BY i.id LIMIT 30 OFFSET :page;";
     String categoryBrandSql="select i.id,i.name,i.condition,i.category,i.brand,(select b.name from brands as b where i.brand=b.id) as brandname,i.price,i.shipping,i.description from items as i where i.category in(select descendant_id from relations where ancestor_id=:categoryid) and i.brand in(select id from brands where name=:brandname) ORDER BY i.id LIMIT 30 OFFSET :page;";
-    String nameSql="select i.id,i.name,i.condition,i.category,i.brand,(select b.name from brands as b where i.brand=b.id) as brandname,i.price,i.shipping,i.description from items as i where i.name=:name ORDER BY i.id LIMIT 30 OFFSET :page;";
+    String nameSql="select i.id,i.name,i.condition,i.category,i.brand,(select b.name from brands as b where i.brand=b.id) as brandname,i.price,i.shipping,i.description from items as i where i.name LIKE :name ORDER BY i.id LIMIT 30 OFFSET :page;";
     String brandSql="select i.id,i.name,i.condition,i.category,i.brand,(select b.name from brands as b where i.brand=b.id) as brandname,i.price,i.shipping,i.description from items as i where i.brand in(select id from brands where name=:brandname) ORDER BY i.id LIMIT 30 OFFSET :page;";
     String categorySql="select i.id,i.name,i.condition,i.category,i.brand,(select b.name from brands as b where i.brand=b.id) as brandname,i.price,i.shipping,i.description from items as i where i.category in(select descendant_id from relations where ancestor_id=:categoryid) ORDER BY i.id LIMIT 30 OFFSET :page";
     String sql="select i.id,i.name,i.condition,i.category,i.brand,(select b.name from brands as b where i.brand=b.id) as brandname,i.price,i.shipping,i.description from items as i ORDER BY i.id LIMIT 30 OFFSET :page";
@@ -80,15 +80,15 @@ public class ItemRepository {
     List<Item> itemList = new ArrayList<Item>();
     if(Objects.nonNull(name)&&Objects.nonNull(categoryId)&&Objects.nonNull(brandName)){
       // name,category,brandが全て検索
-      SqlParameterSource param = new MapSqlParameterSource().addValue("categoryid", Integer.parseInt(categoryId)).addValue("name", name).addValue("brandname", brandName).addValue("page",page);
+      SqlParameterSource param = new MapSqlParameterSource().addValue("categoryid", Integer.parseInt(categoryId)).addValue("name", "%"+name+"%").addValue("brandname", brandName).addValue("page",page);
       itemList=template.query(nameCategoryBrandSql,param,ITEM_ROW_MAPPER);
     }else if(Objects.nonNull(name)&&Objects.nonNull(categoryId)){
       // name,category
-      SqlParameterSource param = new MapSqlParameterSource().addValue("name",name).addValue("categoryid", Integer.parseInt(categoryId)).addValue("page",page);
+      SqlParameterSource param = new MapSqlParameterSource().addValue("name","%"+name+"%").addValue("categoryid", Integer.parseInt(categoryId)).addValue("page",page);
       itemList=template.query(nameCategorySql,param,ITEM_ROW_MAPPER);
     }else if(Objects.nonNull(name)&&Objects.nonNull(brandName)){
       // name,brand
-      SqlParameterSource param = new MapSqlParameterSource().addValue("name",name).addValue("brandname",brandName).addValue("page",page);
+      SqlParameterSource param = new MapSqlParameterSource().addValue("name","%"+name+"%").addValue("brandname",brandName).addValue("page",page);
       itemList=template.query(nameBrandSql,param,ITEM_ROW_MAPPER);
     }else if(Objects.nonNull(categoryId)&&Objects.nonNull(brandName)){
       // category,brand
@@ -96,7 +96,7 @@ public class ItemRepository {
       itemList=template.query(categoryBrandSql,param,ITEM_ROW_MAPPER);
     }else if(Objects.nonNull(name)){
       // name
-      SqlParameterSource param = new MapSqlParameterSource().addValue("name",name).addValue("page",page);
+      SqlParameterSource param = new MapSqlParameterSource().addValue("name","%"+name+"%").addValue("page",page);
       itemList=template.query(nameSql,param,ITEM_ROW_MAPPER);
     }else if(Objects.nonNull(brandName)){
       SqlParameterSource param = new MapSqlParameterSource().addValue("brandname",brandName).addValue("page",page);
@@ -115,11 +115,11 @@ public class ItemRepository {
 
 
   public Integer totalCount(String name,String categoryId,String brandName){
-    String nameCategoryBrandSql="select count(*) from items as i where i.category in(select descendant_id from relations where ancestor_id=:categoryid) and i.name=:name and i.brand in(select id from brands where name=:brandname)";
-    String nameCategorySql="select count(*) from items as i where i.category in(select descendant_id from relations where ancestor_id=:categoryid) and i.name=:name";
-    String nameBrandSql="select count(*) from items as i where i.name=:name and i.brand in(select id from brands where name=:brandname)";
+    String nameCategoryBrandSql="select count(*) from items as i where i.category in(select descendant_id from relations where ancestor_id=:categoryid) and i.name LIKE :name and i.brand in(select id from brands where name=:brandname)";
+    String nameCategorySql="select count(*) from items as i where i.category in(select descendant_id from relations where ancestor_id=:categoryid) and i.name LIKE :name";
+    String nameBrandSql="select count(*) from items as i where i.name LIKE :name and i.brand in(select id from brands where name=:brandname)";
     String categoryBrandSql="select count(*) from items as i where i.category in(select descendant_id from relations where ancestor_id=:categoryid) and i.brand in(select id from brands where name=:brandname)";
-    String nameSql="select count(*) from items as i where i.name=:name";
+    String nameSql="select count(*) from items as i where i.name LIKE :name";
     String brandSql="select count(*) from items as i where i.brand in(select id from brands where name=:brandname)";
     String categorySql="select count(*) from items as i where i.category in(select descendant_id from relations where ancestor_id=:categoryid)";
     String sql="select count(*) from items";
@@ -127,15 +127,15 @@ public class ItemRepository {
     List<Integer> countList = new ArrayList<>();
     if(Objects.nonNull(name)&&Objects.nonNull(categoryId)&&Objects.nonNull(brandName)){
       // name,category,brandが全て検索
-      SqlParameterSource param = new MapSqlParameterSource().addValue("categoryid", Integer.parseInt(categoryId)).addValue("name", name).addValue("brandname", brandName);
+      SqlParameterSource param = new MapSqlParameterSource().addValue("categoryid", Integer.parseInt(categoryId)).addValue("name", "%"+name+"%").addValue("brandname", brandName);
       countList=template.query(nameCategoryBrandSql,param,COUNT_ROW_MAPPER);
     }else if(Objects.nonNull(name)&&Objects.nonNull(categoryId)){
       // name,category
-      SqlParameterSource param = new MapSqlParameterSource().addValue("name",name).addValue("categoryid", Integer.parseInt(categoryId));
+      SqlParameterSource param = new MapSqlParameterSource().addValue("name","%"+name+"%").addValue("categoryid", Integer.parseInt(categoryId));
       countList=template.query(nameCategorySql,param,COUNT_ROW_MAPPER);
     }else if(Objects.nonNull(name)&&Objects.nonNull(brandName)){
       // name,brand
-      SqlParameterSource param = new MapSqlParameterSource().addValue("name",name).addValue("brandname",brandName);
+      SqlParameterSource param = new MapSqlParameterSource().addValue("name","%"+name+"%").addValue("brandname",brandName);
       countList=template.query(nameBrandSql,param,COUNT_ROW_MAPPER);
     }else if(Objects.nonNull(categoryId)&&Objects.nonNull(brandName)){
       // category,brand
@@ -143,7 +143,7 @@ public class ItemRepository {
       countList=template.query(categoryBrandSql,param,COUNT_ROW_MAPPER);
     }else if(Objects.nonNull(name)){
       // name
-      SqlParameterSource param = new MapSqlParameterSource().addValue("name",name);
+      SqlParameterSource param = new MapSqlParameterSource().addValue("name","%"+name+"%");
       countList=template.query(nameSql,param,COUNT_ROW_MAPPER);
     }else if(Objects.nonNull(brandName)){
       SqlParameterSource param = new MapSqlParameterSource().addValue("brandname",brandName);

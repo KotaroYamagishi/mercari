@@ -15,6 +15,15 @@
     <select class="form-control" id="grandChildCategory" name="grandChildCategory" th:fragment="selectGrandChildCategory">
         <option  th:each="category : ${selectAjaxCategoryMap}" th:value="${category.key}" th:text="${category.value}" th:selected="${category.key==grandChildId}">singleSelect</option>
     </select>
+
+    <!-- 検索ボックス用 -->
+    <select class="form-control" id="childCategory" name="childCategory" th:fragment="searchSelectChildCategory">
+        <option  th:each="category : ${selectAjaxCategoryMap}" th:value="${category.key}" th:text="${category.value}" th:selected="${category.key==categoryId}">singleSelect</option>
+    </select>
+
+    <select class="form-control" id="grandChildCategory" name="grandChildCategory" th:fragment="searchSelectGrandChildCategory">
+        <option  th:each="category : ${selectAjaxCategoryMap}" th:value="${category.key}" th:text="${category.value}" th:selected="${category.key==categoryId}">singleSelect</option>
+    </select>
 </body>
     
 </html>
